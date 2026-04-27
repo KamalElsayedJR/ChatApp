@@ -1,4 +1,5 @@
-﻿using ChatApp.Application.Dtos.Mail;
+﻿using ChatApp.Application.Dtos.Image;
+using ChatApp.Application.Dtos.Mail;
 using ChatApp.Application.Interfaces;
 using ChatApp.Application.Repositories;
 using ChatApp.Infrastructure.Data;
@@ -22,6 +23,8 @@ namespace ChatApp.Infrastructure
             services.AddDbContext<AppDbContext>(options => {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
+            services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
+            services.AddScoped<IImageService, CloudinaryServices>();
             services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
             services.AddScoped<IEmailServices, EmailServices>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();

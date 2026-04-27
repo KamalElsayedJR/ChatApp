@@ -1,6 +1,7 @@
 ﻿using ChatApp.Application.Dtos;
 using ChatApp.Application.Dtos.Auth;
 using ChatApp.Application.Dtos.Mail;
+using ChatApp.Application.Dtos.User;
 using ChatApp.Application.Interfaces;
 using ChatApp.Application.Repositories;
 using ChatApp.Application.Specification;

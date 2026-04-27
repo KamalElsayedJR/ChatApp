@@ -13,6 +13,7 @@ namespace ChatApp.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IAuthServices, AuthServices>();
             return services;
         }

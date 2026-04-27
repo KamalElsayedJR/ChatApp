@@ -35,5 +35,9 @@ namespace ChatApp.Infrastructure.Repositories
         public Task<T?> GetOneWithSpecAsync(ISpecification<T> spec)
         => SpecificationEvaluator<T>.GetQuery(dbContext.Set<T>(), spec).FirstOrDefaultAsync();
 
+        public Task<List<T>> GetAllWithSpec(ISpecification<T> spec)
+        {
+            return SpecificationEvaluator<T>.GetQuery(dbContext.Set<T>(), spec).ToListAsync();
+        }
     }
 }

@@ -12,12 +12,13 @@ namespace ChatApp.Application.Repositories
     {
         Task AddAsync(T entity);
         Task<bool> AnyAsync(Expression<Func<T,bool>> expression);
+
         void Delete(T entity);
         Task<T?> GetByIdAsync(string id);
 
         #region With Spec
         Task<T?> GetOneWithSpecAsync(ISpecification<T> spec);
-
+        Task<List<T>> GetAllWithSpec(ISpecification<T> spec);
         #endregion
     }
 }

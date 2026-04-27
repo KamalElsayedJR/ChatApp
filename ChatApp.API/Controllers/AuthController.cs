@@ -85,16 +85,6 @@ namespace ChatApp.API.Controllers
         //    var result = await _authServices.ChangePasswordAsync(request);
         //    return result.IsSuccess ? Ok(result) : BadRequest(result);
         //}
-        [HttpGet("profile")]
-        public async Task<ActionResult<DataResponse<UserDto>>> Profile()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId is null)
-            {
-                return Unauthorized(DataResponse<UserDto>.Failure("Unauthorized please login again"));
-            }
-            var result = await _authServices.Profile(userId);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
+        
     }
 }

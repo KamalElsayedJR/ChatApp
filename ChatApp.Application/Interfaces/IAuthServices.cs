@@ -1,5 +1,6 @@
 ﻿using ChatApp.Application.Dtos;
 using ChatApp.Application.Dtos.Auth;
+using ChatApp.Application.Dtos.User;
 using ChatApp.Domain.Common;
 using ChatApp.Domain.Entities;
 using ChatApp.Domain.Enums;
