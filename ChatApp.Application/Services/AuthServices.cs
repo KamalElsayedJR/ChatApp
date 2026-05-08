@@ -1,4 +1,5 @@
-﻿using ChatApp.Application.Dtos;
+﻿using AutoMapper;
+using ChatApp.Application.Dtos;
 using ChatApp.Application.Dtos.Auth;
 using ChatApp.Application.Dtos.Mail;
 using ChatApp.Application.Dtos.User;
@@ -35,14 +36,17 @@ namespace ChatApp.Application.Services
         private readonly IUnitOfWork _uoW;
         private readonly IJWTServices _jWTServices;
         private readonly IEmailServices _emailServices;
+        private readonly IMapper _mapper;
 
         public AuthServices(IPasswordServices passwordServices, IUnitOfWork UoW,
-                            IJWTServices jWTServices, IEmailServices emailServices)
+                            IJWTServices jWTServices, IEmailServices emailServices,
+                            IMapper mapper)
         {
             _passwordServices = passwordServices;
             _uoW = UoW;
             _jWTServices = jWTServices;
             _emailServices = emailServices;
+            _mapper = mapper;
         }
         public async Task<string?> GenerateRefreshTokenAsync(string UserId)
         {
@@ -477,18 +481,19 @@ namespace ChatApp.Application.Services
             {
                 return DataResponse<UserDto>.Failure("User not found");
             }
-            var userDto = new UserDto
-            {
-                FullName = user.FullName,
-                UserName = user.UserName,
-                Email = user.Email,
-                ProfilePictureURL = user.ProfilePictureURL,
-                Bio = user.Bio,
-                IsEmailConfirmed = user.IsEmailConfirmed,
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
-            };
+            //var userDto = new UserDto
+            //{
+            //    FullName = user.FullName,
+            //    UserName = user.UserName,
+            //    Email = user.Email,
+            //    ProfilePictureURL = user.ProfilePictureURL,
+            //    Bio = user.Bio,
+            //    IsEmailConfirmed = user.IsEmailConfirmed,
+            //    IsActive = user.IsActive,
+            //    CreatedAt = user.CreatedAt,
+            //    UpdatedAt = user.UpdatedAt
+            //};
+            var userDto = _mapper.Map<User, UserDto>(user);
             return DataResponse<UserDto>.Success(userDto);
 
         }

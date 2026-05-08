@@ -1,4 +1,5 @@
-﻿using ChatApp.Application.Dtos;
+﻿using AutoMapper;
+using ChatApp.Application.Dtos;
 using ChatApp.Application.Dtos.User;
 using ChatApp.Application.Interfaces;
 using ChatApp.Application.Repositories;
@@ -17,11 +18,13 @@ namespace ChatApp.Application.Services
     {
         private readonly IUnitOfWork _uoW;
         private readonly IImageService _imageService;
+        private readonly IMapper _mapper;
 
-        public UserServices(IUnitOfWork UoW,IImageService imageService)
+        public UserServices(IUnitOfWork UoW,IImageService imageService,IMapper mapper)
         {
             _uoW = UoW;
             this._imageService = imageService;
+            this._mapper = mapper;
         }
 
         public async Task<DataResponse<SearchedUsers>> GetUserById(string userId)
@@ -72,18 +75,9 @@ namespace ChatApp.Application.Services
             {
                 return DataResponse<UserDto>.Failure("Failed to update profile");
             }
-            var userDto = new UserDto
-            {
-                FullName = user.FullName,
-                Email = user.Email,
-                UserName = user.UserName,
-                ProfilePictureURL = user.ProfilePictureURL,
-                Bio = user.Bio,
-                IsEmailConfirmed = user.IsEmailConfirmed,
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
-            };
+            
+            var userDto = _mapper.Map<User, UserDto>(user);
+
             return DataResponse<UserDto>.Success(userDto);
         }
 
@@ -104,18 +98,8 @@ namespace ChatApp.Application.Services
             {
                 return DataResponse<UserDto>.Failure("Failed to update profile");
             }
-            var userDto = new UserDto
-            {
-                FullName = user.FullName,
-                Email = user.Email,
-                UserName = user.UserName,
-                ProfilePictureURL = user.ProfilePictureURL,
-                Bio = user.Bio,
-                IsEmailConfirmed = user.IsEmailConfirmed,
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
-            };
+            var userDto = _mapper.Map<User, UserDto>(user);
+
             return DataResponse<UserDto>.Success(userDto);
         }
 
@@ -136,18 +120,8 @@ namespace ChatApp.Application.Services
             {
                 return DataResponse<UserDto>.Failure("Failed to update profile");
             }
-            var userDto = new UserDto
-            {
-                FullName = user.FullName,
-                Email = user.Email,
-                UserName = user.UserName,
-                ProfilePictureURL = user.ProfilePictureURL,
-                Bio = user.Bio,
-                IsEmailConfirmed = user.IsEmailConfirmed,
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
-            };
+            
+            var userDto = _mapper.Map<User, UserDto>(user);
 
             return DataResponse<UserDto>.Success(userDto);
         }
@@ -186,18 +160,8 @@ namespace ChatApp.Application.Services
             {
                 return DataResponse<UserDto>.Failure("Failed to update profile picture");
             }
-            var userDto = new UserDto
-            {
-                FullName = user.FullName,
-                Email = user.Email,
-                UserName = user.UserName,
-                ProfilePictureURL = user.ProfilePictureURL,
-                Bio = user.Bio,
-                IsEmailConfirmed = user.IsEmailConfirmed,
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
-            };
+            var userDto = _mapper.Map<User, UserDto>(user);
+
             return DataResponse<UserDto>.Success(userDto);
 
         }

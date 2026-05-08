@@ -26,6 +26,8 @@ namespace ChatApp.Infrastructure.Data.Configurations
             builder.Property(u => u.IsEmailConfirmed) .HasDefaultValue(false);
             builder.Property(u => u.CreatedAt).IsRequired();
             builder.Property(u => u.UpdatedAt) .IsRequired();
+            builder.HasMany(u => u.ChatParticipants).WithOne(cp=>cp.User).HasForeignKey(cp => cp.UserId);
+            builder.HasMany(u => u.Messages).WithOne(m=>m.Sender).HasForeignKey(m => m.SenderId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

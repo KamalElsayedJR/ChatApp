@@ -1,4 +1,5 @@
 ﻿using ChatApp.Domain.Entities;
+using ChatApp.Domain.Entities.ChatAggr;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,9 @@ namespace ChatApp.Infrastructure.Data
         public DbSet<User> Users { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<UserOtp> UserOtps { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<ChatParticipant> ChatParticipants { get; set; }
 
     }
 }

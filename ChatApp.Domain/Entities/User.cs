@@ -1,4 +1,5 @@
 ﻿using ChatApp.Domain.Common;
+using ChatApp.Domain.Entities.ChatAggr;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,9 @@ namespace ChatApp.Domain.Entities
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
         public ICollection<UserOtp> UserOtps { get; set; } = new List<UserOtp>();
+        //public ICollection<Chat> Chats { get; set; } = new List<Chat>();
+        public ICollection<ChatParticipant> ChatParticipants { get; set; } = new List<ChatParticipant>();
+        public ICollection<Message> Messages { get; set; } = new List<Message>();
         private User() { }
         public User(string fullName, string userName, string email, string hashedPassword)
         {
