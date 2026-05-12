@@ -27,7 +27,7 @@ namespace ChatApp.Application.Services
             this._mapper = mapper;
         }
 
-        public async Task<DataResponse<List<MessageDto>>> GetMessageAsync(string userId, string chatId)
+        public async Task<DataResponse<List<MessageDto>>> GetMessageAsync(string userId, string chatId, int pageIndex = 1, int pageSize = 20)
         {
             var spec = new ChatWithParticipantsSpec(chatId);
             var chat = await _uoW.Repository<Chat>().GetOneWithSpecAsync(spec);
@@ -35,7 +35,14 @@ namespace ChatApp.Application.Services
             {
                 return DataResponse<List<MessageDto>>.Failure("Chat not found");
             }
-            return DataResponse<List<MessageDto>>.Success(_mapper.Map<List<MessageDto>>(chat.Messages.OrderBy(m=>m.SentAt)), "Chat retrieved successfully");
+
+            var paginatedMessages = chat.Messages
+                .OrderBy(m => m.SentAt)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return DataResponse<List<MessageDto>>.Success(_mapper.Map<List<MessageDto>>(paginatedMessages), "Chat retrieved successfully");
         }
         public async Task<DataResponse<List<UserChatsDto>>> GetUserChatsAsync(string userId)
         {
@@ -59,7 +66,10 @@ namespace ChatApp.Application.Services
                     UserName = otherUser?.UserName ?? "",
                     ProfilePictureURL = otherUser?.ProfilePictureURL ?? "",
                     LastMessage = lastMessage?.Content,
-                    LastMessageAt = lastMessage?.SentAt
+                    LastMessageAt = lastMessage?.SentAt,
+                    LastMessageTime = lastMessage?.SentAt,
+                    LastMessageSenderId = lastMessage?.SenderId,
+                    UnreadCount = c.Messages.Count(m => !m.IsRead && m.SenderId != userId)
                 };
             }).ToList();
 
@@ -129,8 +139,59 @@ namespace ChatApp.Application.Services
             {
                 return DataResponse<ChatDto>.Failure("Failed to save chat");
             }
-            return DataResponse<ChatDto>.Success(_mapper.Map<ChatDto>(chat), "Chat created successfully");
+            return DataResponse<ChatDto>.Success(_mapper.Map<ChatDto>(chat), "Chat started successfully");
         }
-        
+
+        public async Task<Result> EditMessageAsync(string userId, string messageId, string newContent)
+        {
+            if (string.IsNullOrWhiteSpace(newContent))
+                return Result.Failure("Content cannot be empty");
+
+            var message = await _uoW.Repository<Message>().GetByIdAsync(messageId);
+            if (message == null) return Result.Failure("Message not found");
+            if (message.SenderId != userId) return Result.Failure("Unauthorized");
+            if (message.IsDeleted) return Result.Failure("Cannot edit deleted message");
+
+            message.Content = newContent;
+            message.IsEdited = true;
+            message.EditedAt = DateTime.UtcNow;
+
+            await _uoW.SaveChangesAsync();
+
+            return Result.Success("Message edited successfully");
+        }
+
+        public async Task<Result> DeleteMessageAsync(string userId, string messageId)
+        {
+            var message = await _uoW.Repository<Message>().GetByIdAsync(messageId);
+            if (message == null) return Result.Failure("Message not found");
+            if (message.SenderId != userId) return Result.Failure("Unauthorized");
+
+            message.IsDeleted = true;
+            message.DeletedAt = DateTime.UtcNow;
+            message.Content = "This message was deleted";
+
+            await _uoW.SaveChangesAsync();
+
+            return Result.Success("Message deleted successfully");
+        }
+
+        public async Task<Result> MarkMessageAsSeenAsync(string userId, string messageId)
+        {
+            var message = await _uoW.Repository<Message>().GetByIdAsync(messageId);
+            if (message == null) return Result.Failure("Message not found");
+
+            var chat = await _uoW.Repository<Chat>().GetByIdAsync(message.ChatId);
+            // Wait, we need to know if user is part of the chat and not the sender.
+            if (message.SenderId == userId) return Result.Failure("Sender cannot mark own message as seen");
+
+            message.MessageStatus = Domain.Enums.MessageStatus.Seen;
+            message.IsRead = true;
+            message.ReadAt = DateTime.UtcNow;
+
+            await _uoW.SaveChangesAsync();
+
+            return Result.Success("Message marked as seen");
+        }
     }
 }

@@ -13,7 +13,10 @@ namespace ChatApp.Application.Interfaces
     {
         Task<DataResponse<ChatDto>> StartChatAsync(string ReciverId,string SendrId);
         Task<Result> SendMessageAsync(string senderId, string ChatId, string Content);
-        Task<DataResponse<List<MessageDto>>> GetMessageAsync(string userId, string chatId); 
+        Task<DataResponse<List<MessageDto>>> GetMessageAsync(string userId, string chatId, int pageIndex = 1, int pageSize = 20); 
         Task<DataResponse<List<UserChatsDto>>> GetUserChatsAsync(string userId);
+        Task<Result> EditMessageAsync(string userId, string messageId, string newContent);
+        Task<Result> DeleteMessageAsync(string userId, string messageId);
+        Task<Result> MarkMessageAsSeenAsync(string userId, string messageId);
     }
 }

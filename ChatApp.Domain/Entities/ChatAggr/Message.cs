@@ -17,5 +17,11 @@ namespace ChatApp.Domain.Entities.ChatAggr
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
         public bool IsRead { get; set; }
         public DateTime? ReadAt { get; set; }
+
+        public DateTime? EditedAt { get; set; }
+        public bool IsEdited { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateTime? DeletedAt { get; set; }
+        public ChatApp.Domain.Enums.MessageStatus MessageStatus { get; set; } = ChatApp.Domain.Enums.MessageStatus.Sent;
     }
 }

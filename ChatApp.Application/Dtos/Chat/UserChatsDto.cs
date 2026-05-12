@@ -14,5 +14,8 @@ namespace ChatApp.Application.Dtos.Chat
         public string ProfilePictureURL { get; set; }
         public string? LastMessage { get; set; }
         public DateTime? LastMessageAt { get; set; }
+        public DateTime? LastMessageTime { get; set; }
+        public string? LastMessageSenderId { get; set; }
+        public int UnreadCount { get; set; }
     }
 }

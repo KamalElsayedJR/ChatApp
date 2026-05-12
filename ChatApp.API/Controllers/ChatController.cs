@@ -39,16 +39,47 @@ namespace ChatApp.API.Controllers
             return Ok(result);
         }
         [HttpGet("messages/{chatId}")]
-        public async Task<ActionResult<DataResponse<List<MessageDto>>>> GetMessages([FromRoute] string chatId)
+        public async Task<ActionResult<DataResponse<List<MessageDto>>>> GetMessages([FromRoute] string chatId, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 20)
         {
+            if (pageIndex <= 0) return BadRequest(Result.Failure("Invalid page index"));
+            if (pageSize < 1 || pageSize > 100) return BadRequest(Result.Failure("Invalid page size"));
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _chatServices.GetMessageAsync(userId, chatId);
+            var result = await _chatServices.GetMessageAsync(userId, chatId, pageIndex, pageSize);
             if (!result.IsSuccess)
             {
                 return BadRequest(result);
             }
             return Ok(result);
         }
+
+        [HttpPut("messages/{messageId}")]
+        public async Task<ActionResult<Result>> EditMessage([FromRoute] string messageId, [FromBody] UpdateMessageDto updateMessageDto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _chatServices.EditMessageAsync(userId, messageId, updateMessageDto.Content);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpDelete("messages/{messageId}")]
+        public async Task<ActionResult<Result>> DeleteMessage([FromRoute] string messageId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _chatServices.DeleteMessageAsync(userId, messageId);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPut("messages/{messageId}/seen")]
+        public async Task<ActionResult<Result>> MarkMessageAsSeen([FromRoute] string messageId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _chatServices.MarkMessageAsSeenAsync(userId, messageId);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
         [HttpGet("chats")]
         public async Task<ActionResult<DataResponse<List<UserChatsDto>>>> GetUserChats()
         {
